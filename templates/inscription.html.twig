@@ -1,0 +1,27 @@
+{% extends "base.html.twig" %}
+
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+
+    {% if err == 1 %}
+        <div class = "aler alert-danger">
+			<p class = "alert">Email or Username already used. The password must be longer than 6 caracters with one capital letter</p>
+	    </div>
+    {% endif %}
+
+    {% if err == 0 %}
+        <div class = "aler alert-success">
+			<p class = "alert">Success check your emails to activate your account</p>
+	    </div>
+    {% endif %}
+
+    <div class = "container mt-4">
+        <div class = "row">
+            <div style = "width: 75vw;" class = "justify-content-center">
+                {{ form(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
