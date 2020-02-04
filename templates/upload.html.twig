@@ -6,14 +6,14 @@
 {% block body %}
 
     {% if err == 1 %}
-        <div class = "alert alert-danger">
-			<p class = "alert">Vous devez confirmer votre adresse mail</p>
+        <div class = "alert alert-success">
+			<p class = "alert">Photo importée avec succes</p>
 	    </div>
     {% endif %}
 
     {% if err == 2 %}
         <div class = "alert alert-danger">
-			<p class = "alert">Adresse email ou mot de passe incorrect</p>
+			<p class = "alert">Erreur lors de l'importation</p>
 	    </div>
     {% endif %}
 
