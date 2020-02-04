@@ -19,12 +19,12 @@ class PhotographeRepository extends ServiceEntityRepository
         parent::__construct($registry, Photographe::class);
     }
 
-    
+
     /**
      * @param string Email to check
-     * @return bool 
+     * @return bool
      */
-    public function checkValidEmail($email) 
+    public function checkValidEmail($email)
     {
         $all_users = $this->findAll();
         foreach($all_users as $value)
@@ -39,7 +39,7 @@ class PhotographeRepository extends ServiceEntityRepository
 
     /**
      * @param string Password to check
-     * @return bool 
+     * @return bool
      */
     public function checkValidMdp($mdp)
     {
@@ -62,25 +62,57 @@ class PhotographeRepository extends ServiceEntityRepository
     public function hash_password($password){
         return password_hash($password, PASSWORD_BCRYPT);
     }
-        
 
-    // /**
-    //  * @return Photographe[] Returns an array of Photographe objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+    *Check if the user has confirmed the email
+    *@param String Email to check
+    *@return boolval true if it is confirmed
+    */
+    public function is_confirmed($email){
+
+      $emailfield = $this->findEmailEntry($email);
+    
+      if(empty($emailfield)) {
+        return false;
+    }
+    else if($emailfield[0]->getIsConfirmed() == 1){
+        return true;
+    }
+    return false;
+  }
+
+    /**
+    *@param String The email to check the password
+    *@param String Password to check
+    *@return boolval true if the password matches
+    */
+    public function checkMdpFromEmail($email, $mdp){
+
+      $emailfield = $this->findEmailEntry($email);
+      
+      if(empty($emailfield)) {
+          return false;
+      }
+      else if(password_verify($mdp, $emailfield[0]->getPassword())){
+          return true;
+      }
+      return false;
+    }
+
+
+    /**
+    * @return Photographe[] Returns an array of Photographe objects
+    */
+    public function findEmailEntry($email)
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('p.Email = :val')
+            ->setParameter('val', $email)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
-
+    
     /*
     public function findOneBySomeField($value): ?Photographe
     {

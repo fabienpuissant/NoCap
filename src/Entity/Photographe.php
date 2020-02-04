@@ -86,7 +86,7 @@ class Photographe implements Serializable
 
     public function getIsConfirmed(): ?bool
     {
-        return $this->isConfirmed;
+        return $this->is_Confirmed;
     }
 
     public function setIsConfirmed(bool $is_Confirmed): self
