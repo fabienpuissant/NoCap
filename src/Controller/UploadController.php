@@ -58,7 +58,7 @@ class UploadController extends AbstractController
                     // Move the file to the directory where brochures are stored
                     try {
                         $imageFile->move(
-                            '../photos',
+                            $this->getParameter('photos_directory'),
                             $newFilename
                         );
 

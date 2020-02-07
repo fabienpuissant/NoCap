@@ -29,6 +29,15 @@ class PhotoRepository extends ServiceEntityRepository
         return true;
     }
 
+    /**
+     * @return array All photos in the database
+     */
+    public function getAllPhotos()
+    {
+        return $this->findAll();
+    }
+
+
 
     // /**
     //  * @return Photo[] Returns an array of Photo objects

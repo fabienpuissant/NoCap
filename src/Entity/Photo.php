@@ -11,8 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Photo
 {
 
-    private $File;
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -39,6 +37,16 @@ class Photo
      * @ORM\Column(type="datetime")
      */
     private $Date;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $LikeCounter = 0;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $FileName;
 
     public function __construct()
     {
@@ -88,12 +96,12 @@ class Photo
 
     public function getFileName(): ?string
     {
-        return $this->File;
+        return $this->FileName;
     }
 
-    public function setFileName(string $File): self
+    public function setFileName(string $FileName): self
     {
-        $this->File = $File;
+        $this->FileName = $FileName;
 
         return $this;
     }
@@ -106,6 +114,18 @@ class Photo
     public function setDate(\DateTimeInterface $Date): self
     {
         $this->Date = $Date;
+
+        return $this;
+    }
+
+    public function getLikeCounter(): ?int
+    {
+        return $this->LikeCounter;
+    }
+
+    public function setLikeCounter(int $LikeCounter): self
+    {
+        $this->LikeCounter = $LikeCounter;
 
         return $this;
     }
