@@ -8,7 +8,6 @@
 
     {% for photo in  allPhotos  %}
 
-
       <div class="container mt-4">
         <div class="card">
           <div class="card-body">
@@ -16,11 +15,11 @@
             <p class="card-text">{{ photo["Description"]}}</p>
             <p class="card-text"><small>Auteur : {{ photo["Author"] }}</small></p>
           </div>
-          <img src={{ asset(photo['FileName'], 'photos') }} class="card-img-top photo_actu" alt="image_displayed">
+          <img src="{{ asset(photo['FileName'], 'photos') }}" class="card-img-top photo_actu" alt="image_displayed">
           <div class="vote"  data-ref_id = "{{ photo['id'] }}"  id = "{{ photo['id'] }}">
             <div class="vote_btns">
               <div class="vote_btn vote_like" data-vote = 'like' data-ref_id = "{{ photo['id'] }}">
-                  <img src={{ asset(photo['Like'], 'images') }} alt="like icon"><span class = "like_count" data-ref_id = "{{ photo['id'] }}">Counter</span>
+                  <img src="{{ asset(photo['Like'], 'images') }}" alt="like icon"><span class = "like_count" data-ref_id = "{{ photo['id'] }}" onclick="like()">Counter</span>
               </div>
             </div>
           </div>
