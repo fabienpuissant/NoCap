@@ -51,7 +51,7 @@ class UploadController extends AbstractController
                 if ($imageFile) {
                     $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                     // this is needed to safely include the file name as part of the URL
-                    $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                    $safeFilename = md5(date('Y-m-d H:i:s:u'));
                     $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
                     
 
