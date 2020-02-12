@@ -4,6 +4,6 @@ function like()
 
     //Récupération de l'id de la photo
     var photo_id = $('.vote[data-ref-id]');
-    alert(photo_id);
+    
 }
 

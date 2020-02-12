@@ -3,14 +3,16 @@
 namespace App\Controller;
 
 
-
 use \App\Repository\PhotoRepository;
 use \App\Entity\Photo;
-use \App\Entity\Vote;
-use \App\Repository\VoteRepository;
+use \App\Repository\UserRepository;
+use \App\Entity\User;
+use \App\Repository\PhotoLikeRepository; 
+use \App\Entity\PhotoLike;
+
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -18,12 +20,14 @@ class FluxController extends AbstractController
 {
 
     private $photorepository;
-    private $voterepository;
+    private $userrepository;
+    private $session;
 
-    public function __construct(PhotoRepository $photorepository, VoteRepository $voterepository ) 
+    public function __construct(PhotoRepository $photorepository, SessionInterface $session, UserRepository $userrepository) 
     {
+        $this->session = $session;
         $this->photorepository = $photorepository;
-        $this->voterepository = $voterepository;
+        $this->userrepository = $userrepository;
     }
 
     /**
@@ -42,32 +46,26 @@ class FluxController extends AbstractController
      */
     public function display(Request $request)
     {
-        //Check if the user is connected
-        /*if(empty($_SESSION["user"]))
-        {
-            return $this->redirectToRoute('connexion');
-        } 
-        */
 
+        $apikey = $this->session->get('user');
+
+        $user = $this->userrepository->findUserByApiKey($apikey);
+
+    
         $allPhotosArray = [];
         $allPhotosObjects = $this->photorepository->getAllPhotos();
 
         foreach($allPhotosObjects as $photoObject)
         {
             $intarray = [];
-
-            //Récupération des données relatives aux likes de la personne
-            //$like = $this->voterepository->isLiked($photoObject, $_SESSION["user"]);
-            $like = $this->voterepository->isLiked($photoObject->getFileName(), "fabien");
-
-            if($like){
+            if($photoObject->isLikedByUser($user)){
                 $intarray["Like"] = "coeurliked.png";
             } else {
-                $intarray["Like"] = "coeur.png ";  
+                $intarray["Like"] = "coeur.png";
             }
 
-            $like_counter = $photoObject->getLikeCounter();
-
+            
+            $intarray["Likes"] = count($photoObject->getLikes());
             $intarray["Title"] = $photoObject->getTitle();
             $intarray["Description"] = $photoObject->getDescription();
             $intarray["Author"] = $photoObject->getAuthor();
@@ -80,6 +78,67 @@ class FluxController extends AbstractController
         return $this->render("flux.html.twig",
                             ['allPhotos' => $allPhotosArray]);
     }
+
+    /**
+     * Like or unlike a photo
+     * @Route("/flux/{id}/like", name = "post_like")
+     * @param integer id of photo
+     * @param PostLikeRepository
+     * @return Response
+     */
+    public function like($id, PhotoLikeRepository $repository){
+        $apikey = $this->session->get('user');
+        $user = $this->userrepository->findUserByApiKey($apikey);
+        $entityManager = $this->getDoctrine()->getManager();
+        $photo = $this->photorepository->find($id);
+        
+
+        //Premier cas, l'utilisateur n'est pas connecté
+        if(!$user) return $this->json([
+            'code' => 403,
+            'message' => 'Unauthorized'
+        ], 403);
+
+        //var_dump($photo->isLikedByUser($user));   
+
+        
+        //Deuxieme cas, l'utilisateur supprime son like
+        if($photo->isLikedByUser($user)) {
+            $like = $repository->findOneBy([
+                'photo' => $photo,
+                'user' => $user
+            ]);
+            $photo->removeLike($like);
+            $entityManager->remove($like);
+            
+            $entityManager->flush();
+
+            return $this->json([
+                'code' => 200,
+                'message' => 'like bien supprimé',
+                'likes' => $repository->count(['photo' => $photo])
+            ], 200);
+        }
+
+        //troisieme cas, l'utilisateur ajoute un like
+        $like = new PhotoLike();
+        $like->setPhoto($photo)->setUser($user);
+        $entityManager->persist($like);
+        $photo->addLike($like);
+        $entityManager->flush();
+
+        return $this->json([
+            'code' => 200,
+            'message' => 'like bien ajouté',
+            'likes' => $repository->count(['photo' => $photo])
+        ], 200);
+
+
+
+
+    }
+
+
 }
 
 

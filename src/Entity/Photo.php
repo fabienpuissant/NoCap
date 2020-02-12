@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
-
+use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,20 +40,22 @@ class Photo
      */
     private $Date;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $LikeCounter = 0;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $FileName;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\PhotoLike", mappedBy="photo", orphanRemoval=true)
+     */
+    private $likes;
+
 
     public function __construct()
     {
         $this->Date =  \DateTime::createFromFormat("H:i:s", date("H:i:s"));
+        $this->likes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,15 +123,49 @@ class Photo
         return $this;
     }
 
-    public function getLikeCounter(): ?int
+    /**
+     * @return Collection|PhotoLike[]
+     */
+    public function getLikes(): Collection
     {
-        return $this->LikeCounter;
+        return $this->likes;
     }
 
-    public function setLikeCounter(int $LikeCounter): self
+    public function addLike(PhotoLike $like): self
     {
-        $this->LikeCounter = $LikeCounter;
+        if (!$this->likes->contains($like)) {
+            $this->likes[] = $like;
+            $like->setPhoto($this);
+        }
 
         return $this;
     }
+
+    public function removeLike(PhotoLike $like): self
+    {
+        if ($this->likes->contains($like)) {
+            $this->likes->removeElement($like);
+            // set the owning side to null (unless already changed)
+            if ($like->getPhoto() === $this) {
+                $like->setPhoto(null);
+            }
+        }
+
+        return $this;
+    }
+
+        /**
+     * Return true if the photo is liked by the user
+     * @param User user to search
+     * @return bool true if the user has liked the photo
+     */
+    public function isLikedByUser($user){
+        foreach($this->likes as $like){
+            if($like->getUser()->getApiKey() == $user->getApiKey()){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

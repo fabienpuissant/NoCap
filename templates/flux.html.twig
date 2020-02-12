@@ -19,7 +19,9 @@
           <div class="vote"  data-ref_id = "{{ photo['id'] }}"  id = "{{ photo['id'] }}">
             <div class="vote_btns">
               <div class="vote_btn vote_like" data-vote = 'like' data-ref-id = {{ photo['id'] }}>
-                  <img src={{ asset(photo['Like'], 'images') }} alt="like icon" onclick="like()"><span class = "like_count" data-ref-id = {{ photo['id'] }}>Counter</span>
+                  <a href = {{ path('post_like', {id: photo['id']}) }} class = "js-like" style="text-decoration:none;color:black">
+                    <img src={{ asset(photo['Like'], 'images') }} alt="like icon" class = "js-img"><span class = "js-like" data-ref-id = {{ photo['id'] }}>{{ photo['Likes'] }}</span>
+                  </a>
               </div>
             </div>
           </div>
@@ -30,5 +32,37 @@
 
     {% endfor %}
 
+
+{% endblock %}
+
+{% block javascripts %}
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+
+  function onClickBtnLike(event){
+    event.preventDefault();
+
+    const url = this.href;
+    const spanCount = this.querySelector('span.js-like');
+    const icone = this.querySelector('img.js-img');
+    axios.get(url).then(function(response){
+      spanCount.textContent = response.data.likes;
+      console.log(response.data);
+      if(icone.src == 'http://localhost:8000/img/coeur.png'){
+        console.log(icone.src);
+        icone.src = 'http://localhost:8000/img/coeurliked.png';
+      } else {
+        icone.src = 'http://localhost:8000/img/coeur.png';
+      }
+    })
+  }
+
+  document.querySelectorAll('a.js-like').forEach(function(link){
+    link.addEventListener('click', onClickBtnLike);
+  });
+
+</script>
 
 {% endblock %}
