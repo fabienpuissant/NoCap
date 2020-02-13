@@ -5,64 +5,53 @@ namespace App\Controller;
 
 use \App\Repository\UserRepository;
 use \App\Entity\User;
-use \App\Form\UserType;
-
-
+use \App\Form\UserSearchType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AddUserController extends AbstractController
+class AdminController extends AbstractController
 {
 
     private $repository;
 
-    public function __construct(UserRepository $repository) 
+    public function __construct(UserRepository $repository)
     {
         $this->repository = $repository;
     }
 
     /**
-     * @Route("/admin/adduser", name = "adduser" , methods = "GET|POST") 
+     * @Route("/admin/index", name = "adminIndex" , methods = "GET|POST") 
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function add(Request $request)
     {
+
+        //Recherche dans la liste des invités
         $entityManager = $this->getDoctrine()->getManager();
-
-
         $user = new User();
-
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserSearchType::class, $user);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
             if($this->repository->checkEmail($data->getEmail())){
-                return $this->render("adduser.html.twig", [
+                return $this->render("AdminIndex.html.twig", [
                     'form' =>  $form->createView(),
-                    'err' => 2
+                    'err' => 2,
                 ]);
             }
-
-            $user->setApiKey(md5(microtime().rand()))->setEmail($data->getEmail());  
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return $this->render("adduser.html.twig", [
+            return $this->render("AdminIndex.html.twig",[
                 'form' =>  $form->createView(),
-                'err' => 1
-            ]);
+                'err' => 1, 
+                ]);
         }
-
-       
-
-        return $this->render("adduser.html.twig", [
+        return $this->render("AdminIndex.html.twig",[
             'form' =>  $form->createView(),
-            'err' => 0
-        ]);
+            'err' => 0, 
+            ]);
     }
 }
 
