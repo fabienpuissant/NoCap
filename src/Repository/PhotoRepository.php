@@ -37,6 +37,20 @@ class PhotoRepository extends ServiceEntityRepository
         return $this->findAll();
     }
 
+    /**
+     * @param String The category we want to display
+     * @return Array array of photos
+     */
+    public function getPhotoByCategory(String $categorie)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.categorie = :val')
+            ->setParameter('val', $categorie)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 
 
     // /**

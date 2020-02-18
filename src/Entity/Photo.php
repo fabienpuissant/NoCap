@@ -51,6 +51,11 @@ class Photo
      */
     private $likes;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $categorie;
+
 
     public function __construct()
     {
@@ -166,6 +171,18 @@ class Photo
             }
         }
         return false;
+    }
+
+    public function getCategorie(): ?string
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(string $categorie): self
+    {
+        $this->categorie = $categorie;
+
+        return $this;
     }
 
 }

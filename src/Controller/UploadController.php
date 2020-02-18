@@ -68,6 +68,7 @@ class UploadController extends AbstractController
                         $photo->setAuthor(htmlentities($data->getAuthor()));
                         $photo->setDescription(htmlentities($data->getDescription()));
                         $photo->setFileName($newFilename);
+                        $photo->setCategorie(htmlentities($data->getCategorie()));
                         $em->persist($data);
                         $em->flush();
 

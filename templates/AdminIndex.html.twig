@@ -17,6 +17,12 @@
 	    </div>
     {% endif %}
 
+     {% if err == 3 %}
+        <div class = "alert alert-danger">
+			<p class = "alert">Utilisateur déjà  rentré</p>
+	    </div>
+    {% endif %}
+
     <div class = "container mt-4">
         <div class = "row mt-4">
             <div class = "col" style = "width: 75vw;" class = "justify-content-center">
@@ -34,7 +40,7 @@
                 {{ form(form) }}
             </div>
         </div>
-            
+
     </div>
         
     </div>

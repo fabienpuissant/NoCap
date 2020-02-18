@@ -33,6 +33,26 @@ class User
      */
     private $email;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $Nom;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $Prenom;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isIn = false;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $Phone;
+
     public function __construct()
     {
         $this->likes = new ArrayCollection();
@@ -94,6 +114,54 @@ class User
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->Nom;
+    }
+
+    public function setNom(string $Nom): self
+    {
+        $this->Nom = $Nom;
+
+        return $this;
+    }
+
+    public function getPrenom(): ?string
+    {
+        return $this->Prenom;
+    }
+
+    public function setPrenom(string $Prenom): self
+    {
+        $this->Prenom = $Prenom;
+
+        return $this;
+    }
+
+    public function getIsIn(): ?bool
+    {
+        return $this->isIn;
+    }
+
+    public function setIsIn(bool $isIn): self
+    {
+        $this->isIn = $isIn;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->Phone;
+    }
+
+    public function setPhone(string $Phone): self
+    {
+        $this->Phone = $Phone;
 
         return $this;
     }

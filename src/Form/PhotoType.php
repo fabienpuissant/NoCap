@@ -10,6 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 use Symfony\Component\Validator\Constraints\File;
 
@@ -46,6 +47,10 @@ class PhotoType extends AbstractType
             ->add('Title', TextType::class, ['label' => 'Titre'])
             ->add('Author', TextType::class, ['label' => 'Auteur'])
             ->add('Description', TextType::class, ['label' => 'Description'])
+            ->add('Categorie', ChoiceType::class, ['choices' =>
+                                                    ['Homme' => 'Homme',
+                                                    'Femme' => 'Femme',
+                                                    'Mixte' => 'Mixte']], ['label' => 'categorie'])
             ->add('save', SubmitType::class, ['label' => 'Envoyer la photo'])
         ;
     }

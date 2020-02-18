@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class UserSearchType extends AbstractType
@@ -15,7 +16,8 @@ class UserSearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email', EmailType::class, ['label' => 'Email'])
+            ->add('Nom', TextType::class, ['label' => 'Nom'])
+            ->add('Prenom', TextType::class, ['label' => 'Prenom'])
             ->add('save', SubmitType::class, ['label' => 'Rechercher utilisateur'])
         ;
     }

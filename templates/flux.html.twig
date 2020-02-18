@@ -5,10 +5,20 @@
 
 {% block body %}
 
+  <div class ="container mt-4">
+    <div class = "form-group mt-4">
+      <label for="Categorie">Catégorie</label>
+       <select class="form-control" id="Categorie" onchange="selectCategorie()">
+        <option>Mixte</option>
+        <option>Homme</option>
+        <option>Femme</option>
+      </select>
+    </div>
+  </div>
 
     {% for photo in  allPhotos  %}
 
-      <div class="container mt-4">
+      <div class="container mt-4" id = "photos">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">{{ photo["Title"] }}</h5>
@@ -27,42 +37,25 @@
           </div>
           </div>
         </div>
-        <br/>   
-
+        <br/> 
 
     {% endfor %}
 
+  {% if allPhotos is empty %}
+
+    <div class = 'noResults'>Aucune photo disponible</div>  
+
+  {% endif %}
 
 {% endblock %}
+
 
 {% block javascripts %}
 
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-<script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-  function onClickBtnLike(event){
-    event.preventDefault();
-
-    const url = this.href;
-    const spanCount = this.querySelector('span.js-like');
-    const icone = this.querySelector('img.js-img');
-    axios.get(url).then(function(response){
-      spanCount.textContent = response.data.likes;
-      console.log(response.data);
-      if(icone.src == 'http://localhost:8000/img/coeur.png'){
-        console.log(icone.src);
-        icone.src = 'http://localhost:8000/img/coeurliked.png';
-      } else {
-        icone.src = 'http://localhost:8000/img/coeur.png';
-      }
-    })
-  }
-
-  document.querySelectorAll('a.js-like').forEach(function(link){
-    link.addEventListener('click', onClickBtnLike);
-  });
-
-</script>
+<script src = "../js/main.js"></script>
 
 {% endblock %}

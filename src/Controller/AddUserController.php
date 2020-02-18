@@ -40,14 +40,18 @@ class AddUserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            if($this->repository->checkEmail($data->getEmail())){
+            if($this->repository->checkUser($data->getNom(), $data->getPrenom())){
                 return $this->render("adduser.html.twig", [
                     'form' =>  $form->createView(),
                     'err' => 2
                 ]);
             }
 
-            $user->setApiKey(md5(microtime().rand()))->setEmail($data->getEmail());  
+            $user->setApiKey(md5(microtime().rand()))
+                ->setEmail(htmlentities($data->getEmail()))
+                ->setNom(htmlentities($data->getNom()))
+                ->setPrenom(htmlentities($data->getPrenom()))
+                ->setPhone(htmlentities($data->getPhone()));
             $entityManager->persist($user);
             $entityManager->flush();
 

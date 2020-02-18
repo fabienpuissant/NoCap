@@ -49,8 +49,14 @@ class FluxController extends AbstractController
 
         $apikey = $this->session->get('user');
 
+        if(!isset($apikey)) {
+            return $this->render("notConnected.html.twig");
+        }
+
+
         $user = $this->userrepository->findUserByApiKey($apikey);
 
+ 
     
         $allPhotosArray = [];
         $allPhotosObjects = $this->photorepository->getAllPhotos();
@@ -88,6 +94,7 @@ class FluxController extends AbstractController
      */
     public function like($id, PhotoLikeRepository $repository){
         $apikey = $this->session->get('user');
+    
         $user = $this->userrepository->findUserByApiKey($apikey);
         $entityManager = $this->getDoctrine()->getManager();
         $photo = $this->photorepository->find($id);

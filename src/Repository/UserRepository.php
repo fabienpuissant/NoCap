@@ -54,15 +54,31 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    public function checkEmail($email){
-        $user = $this->createQueryBuilder('u')
-            ->andWhere('u.email = :val')
-            ->setParameter('val', $email)
-            ->getQuery()
-            ->getResult()
-        ;
+    public function checkUser($nom, $prenom){
+       $user = $this->getUserFromName($nom, $prenom);
         if(!empty($user)){
             return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function setUserIn($nom, $prenom){
+        return $this->getUserFromName($nom, $prenom);
+    }
+
+    public function getUserFromName($nom, $prenom){
+        $user = $this->createQueryBuilder('u')
+        ->andWhere('u.Nom = :nom')
+        ->setParameter('nom', $nom)
+        ->andWhere('u.Prenom = :prenom')
+        ->setParameter('prenom', $prenom)
+        ->getQuery()
+        ->getResult()
+        ;
+        if(!empty($user)){
+            return $user[0];
         }
         else {
             return false;

@@ -9,6 +9,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+
 
 class UserType extends AbstractType
 {
@@ -16,6 +18,9 @@ class UserType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, ['label' => 'Email'])
+            ->add('Nom', TextType::class, ['label' => 'Nom'])
+            ->add('Prenom', TextType::class, ['label' => 'Prenom'])
+            ->add('Phone', TextType::class, ['label'=> 'Téléphone'])
             ->add('save', SubmitType::class, ['label' => 'Ajouter utilisateur'])
         ;
     }
