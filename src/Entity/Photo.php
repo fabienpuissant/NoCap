@@ -164,7 +164,7 @@ class Photo
      * @param User user to search
      * @return bool true if the user has liked the photo
      */
-    public function isLikedByUser($user){
+    public function isLikedByUser(User $user){
         foreach($this->likes as $like){
             if($like->getUser()->getApiKey() == $user->getApiKey()){
                 return true;

@@ -39,7 +39,8 @@ class AdminController extends AbstractController
             $data = $form->getData();
 
             //Si l'utilisateur est dans la base de données
-            if($this->repository->checkUser($data->getNom(), $data->getPrenom())){
+            if($this->repository->checkUser($data->getNom(), $data->getPrenom()) 
+                || $this->repository->checkCode($data->getCode())){
                 $user = $this->repository->setUserIn($data->getNom(), $data->getPrenom());
 
                 //Si l'utilisateur est deja rentré, on renvoie une erreur

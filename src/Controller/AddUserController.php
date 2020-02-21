@@ -51,7 +51,8 @@ class AddUserController extends AbstractController
                 ->setEmail(htmlentities($data->getEmail()))
                 ->setNom(htmlentities($data->getNom()))
                 ->setPrenom(htmlentities($data->getPrenom()))
-                ->setPhone(htmlentities($data->getPhone()));
+                ->setPhone(htmlentities($data->getPhone()))
+                ->setCode(htmlentities($data->getCode()));
             $entityManager->persist($user);
             $entityManager->flush();
 

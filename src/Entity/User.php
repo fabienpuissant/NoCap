@@ -53,6 +53,11 @@ class User
      */
     private $Phone;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $Code;
+
     public function __construct()
     {
         $this->likes = new ArrayCollection();
@@ -162,6 +167,18 @@ class User
     public function setPhone(string $Phone): self
     {
         $this->Phone = $Phone;
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->Code;
+    }
+
+    public function setCode(string $Code): self
+    {
+        $this->Code = $Code;
 
         return $this;
     }

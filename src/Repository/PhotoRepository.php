@@ -29,23 +29,17 @@ class PhotoRepository extends ServiceEntityRepository
         return true;
     }
 
-    /**
-     * @return array All photos in the database
-     */
-    public function getAllPhotos()
-    {
-        return $this->findAll();
-    }
 
     /**
      * @param String The category we want to display
      * @return Array array of photos
      */
-    public function getPhotoByCategory(String $categorie)
+    public function getPhotoByCategory(String $category)
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.categorie = :val')
-            ->setParameter('val', $categorie)
+            ->setParameter('val', $category)
+            ->orderBy('p.id', 'DESC')
             ->getQuery()
             ->getResult()
         ;

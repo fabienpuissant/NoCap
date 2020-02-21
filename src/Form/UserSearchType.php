@@ -18,6 +18,7 @@ class UserSearchType extends AbstractType
         $builder
             ->add('Nom', TextType::class, ['label' => 'Nom'])
             ->add('Prenom', TextType::class, ['label' => 'Prenom'])
+            ->add('Code', TextType::class, ['label'=> 'Code'])
             ->add('save', SubmitType::class, ['label' => 'Rechercher utilisateur'])
         ;
     }
