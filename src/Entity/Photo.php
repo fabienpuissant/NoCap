@@ -63,6 +63,14 @@ class Photo
         $this->likes = new ArrayCollection();
     }
 
+    static function cmp($a, $b)
+    {
+        if ($a == $b) {
+            return 0;
+        }
+        return ($a->getLikes() < $b->getLikes()) ? -1 : 1;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -184,5 +192,7 @@ class Photo
 
         return $this;
     }
+
+
 
 }

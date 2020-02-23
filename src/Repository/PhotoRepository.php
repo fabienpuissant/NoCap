@@ -46,6 +46,15 @@ class PhotoRepository extends ServiceEntityRepository
     }
 
 
+    public function getPhotoByLikes($allPhotos)
+    {
+        //TO DO sorted allphotos by likes
+        return $allPhotos;
+ 
+    }
+
+  
+
 
     // /**
     //  * @return Photo[] Returns an array of Photo objects

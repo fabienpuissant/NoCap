@@ -1,0 +1,61 @@
+{% extends "base.html.twig" %}
+
+
+{% block title %}NoCap{% endblock %}
+
+{% block body %}
+
+  <div class ="container mt-4">
+    <div class = "form-group mt-4">
+      <label for="Categorie">Catégorie</label>
+       <select class="form-control" id="Categorie" onchange="selectCategorie()">
+        <option>{{ FirstCategory }}</option>
+        <option>{{ SecondCategory }}</option>
+        <option>{{ ThirdCategory }}</option>
+      </select>
+    </div>
+  </div>
+    <div class="container mt-4" id = "photos">
+    {% for photo in  allPhotos  %}
+
+      
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ photo["Title"] }}</h5>
+            <p class="card-text">{{ photo["Description"]}}</p>
+            <p class="card-text"><small>Auteur : {{ photo["Author"] }}</small></p>
+          </div>
+          <img src={{ asset(photo['FileName'], 'photos') }} class="card-img-top photo_actu" alt="image_displayed">
+          <div class="vote"  data-ref_id = "{{ photo['id'] }}"  id = "{{ photo['id'] }}">
+            <div class="vote_btns">
+              <div class="vote_btn vote_like" data-vote = 'like' data-ref-id = {{ photo['id'] }}>
+                    {{ photo['Likes'] }}                
+              </div>
+            </div>
+          </div>
+          </div>
+        
+        <br/> 
+
+    {% endfor %}
+    </div>
+    <div id="end"></div>
+
+  {% if allPhotos is empty %}
+
+    <div class = 'noResults'>Aucune photo disponible</div>  
+
+  {% endif %}
+
+{% endblock %}
+
+
+{% block javascripts %}
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script src = "../js/main.js"></script>
+
+{% endblock %}
