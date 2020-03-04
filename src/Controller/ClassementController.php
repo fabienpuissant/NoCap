@@ -7,7 +7,7 @@ use \App\Repository\PhotoRepository;
 use \App\Entity\Photo;
 use \App\Repository\UserRepository;
 use \App\Entity\User;
-use \App\Repository\PhotoLikeRepository; 
+use \App\Repository\PhotoLikeRepository;
 use \App\Entity\PhotoLike;
 
 
@@ -26,7 +26,7 @@ class ClassementController extends AbstractController
     private $apikey;
     private $photodisplayed = 0;
 
-    public function __construct(PhotoRepository $photorepository, SessionInterface $session, UserRepository $userrepository) 
+    public function __construct(PhotoRepository $photorepository, SessionInterface $session, UserRepository $userrepository)
     {
         $this->session = $session;
         $this->photorepository = $photorepository;
@@ -51,74 +51,76 @@ class ClassementController extends AbstractController
      */
     public function display(Request $request)
     {
-
-        if(!isset($this->apikey)) {
+        if ($this->user == null) {
             return $this->render("notConnected.html.twig");
         }
 
-        $allPhotosArraynNotSorted = $this->getPhotosByCategory('Mixte', 1);
 
-        $allPhotosArray = $this->photorepository->getPhotoByLikes($allPhotosArraynNotSorted);
-        
-        return $this->render("classement.html.twig",
-                            ['allPhotos' => $allPhotosArray,
-                            'FirstCategory' => 'Mixte',
-                            'SecondCategory' => 'Femme',
-                            'ThirdCategory' => 'Homme']);
+        if (!isset($this->apikey)) {
+            return $this->render("notConnected.html.twig");
+        }
+
+        $allPhotosArray = $this->getArrayFromObjectsSorted("Mixte");
+
+
+        return $this->render(
+            "classement.html.twig",
+            [
+                'allPhotos' => $allPhotosArray,
+                'FirstCategory' => 'Mixte',
+                'SecondCategory' => 'Femme',
+                'ThirdCategory' => 'Homme'
+            ]
+        );
     }
 
-    
+
 
     /**
      * Select a category of photos
-     * @Route("/classement/{categorie}", name = "select_category")
+     * @Route("/classement/{categorie}", name = "select_category_classement")
      * @return Response
      */
-    public function selectCategory($categorie){
-        {
-            $allPhotosArray = $this->getPhotosByCategory($categorie, 1);
-            $allPhotosArray = $this->photorepository->getPhotoByLikes($allPhotosArraynNotSorted);
+    public function selectCategory($categorie)
+    {
+        if ($this->user == null) {
+            return $this->render("notConnected.html.twig");
+        }
 
-            if($categorie == 'Mixte'){
-                return $this->render("classement.html.twig",
-                            ['allPhotos' => $allPhotosArray,
-                            'FirstCategory' => 'Mixte',
-                            'SecondCategory' => 'Femme',
-                            'ThirdCategory' => 'Homme']);   
-            }
-            else if($categorie == 'Homme'){
-                return $this->render("classement.html.twig",
-                            ['allPhotos' => $allPhotosArray,
-                            'FirstCategory' => 'Homme',
-                            'SecondCategory' => 'Femme',
-                            'ThirdCategory' => 'Mixte']);   
-            }
-            else {
-                return $this->render("classement.html.twig",
-                            ['allPhotos' => $allPhotosArray,
-                            'FirstCategory' => 'Femme',
-                            'SecondCategory' => 'Mixte',
-                            'ThirdCategory' => 'Homme']);   
-            }
+        $allPhotosArray = $this->getArrayFromObjectsSorted($categorie);
+
+        if ($categorie == 'Mixte') {
+            return $this->render(
+                "classement.html.twig",
+                [
+                    'allPhotos' => $allPhotosArray,
+                    'FirstCategory' => 'Mixte',
+                    'SecondCategory' => 'Femme',
+                    'ThirdCategory' => 'Homme'
+                ]
+            );
+        } else if ($categorie == 'Homme') {
+            return $this->render(
+                "classement.html.twig",
+                [
+                    'allPhotos' => $allPhotosArray,
+                    'FirstCategory' => 'Homme',
+                    'SecondCategory' => 'Femme',
+                    'ThirdCategory' => 'Mixte'
+                ]
+            );
+        } else {
+            return $this->render(
+                "classement.html.twig",
+                [
+                    'allPhotos' => $allPhotosArray,
+                    'FirstCategory' => 'Femme',
+                    'SecondCategory' => 'Mixte',
+                    'ThirdCategory' => 'Homme'
+                ]
+            );
         }
     }
-
-
-    /**
-     * Display more photos
-     * @Route("/flux/{category}/{nbPhotoDisplayed}", name = "diplay_more")
-     * @param string The category we want to display
-     * @param integer number of photo already displayed
-     * @return Response
-     */
-    public function scroll(string $category, string $nbPhotoDisplayed){
-        $allPhotosArray = $this->getPhotosByCategory($category, intval($nbPhotoDisplayed));
-        return $this->json([
-            'code' => 200,
-            'photos' => $allPhotosArray
-        ], 200);
-    }
-
 
 
     /**
@@ -132,44 +134,48 @@ class ClassementController extends AbstractController
      *                                                             'FileName' => The filename to get the path of the file
      *                                                             'id' => The id of the photo 
      */
-    private function getPhotosByCategory(string $category, int $nbPhotoDisplayed)
+    private function getArrayFromObjectsSorted(string $category)
     {
         $allPhotosArray = [];
         //The array with all photos sorted by decreasing order
+
         $allPhotosObjects = $this->photorepository->getPhotoByCategory($category);
 
+        usort($allPhotosObjects, function ($a, $b) {
+            if (count($a->getLikes()) == count($b->getLikes())) {
+                return 0;
+            }
+            return (count($a->getLikes()) < count($b->getLikes())) ? -1 : 1;
+        });
+
+        $allPhotosObjects = array_reverse($allPhotosObjects);
 
         //Get the photos we need
         //p is the number of photos we display at the same time
         $p = 2;
         $photoToDisplay = [];
-        
-        for($i = ($nbPhotoDisplayed - 1)*$p; $i<$nbPhotoDisplayed*$p; $i++){
-            if(isset($allPhotosObjects[$i])){
+        $nbPhotoDisplayed = 10;
+        for ($i = 0; $i < $nbPhotoDisplayed; $i++) {
+            if (isset($allPhotosObjects[$i])) {
                 $photoToDisplay[] = $allPhotosObjects[$i];
             }
         }
 
-        foreach($photoToDisplay as $photoObject)
-        {
+        foreach ($photoToDisplay as $photoObject) {
             $intarray = [];
-            if($photoObject->isLikedByUser($this->user)){
-                $intarray["Like"] = "coeurliked.png";
+            if ($photoObject->isLikedByUser($this->user)) {
+                $intarray["Like"] = "http://nocap.ddns.net:8000/img/coeurliked.png";
             } else {
-                $intarray["Like"] = "coeur.png";
-            }            
+                $intarray["Like"] = "http://nocap.ddns.net:8000/img/coeur.png";
+            }
             $intarray["Likes"] = count($photoObject->getLikes());
             $intarray["Title"] = $photoObject->getTitle();
             $intarray["Description"] = $photoObject->getDescription();
             $intarray["Author"] = $photoObject->getAuthor();
-            $intarray["FileName"] = $photoObject->getFileName();
+            $intarray["FileName"] = "http://nocap.ddns.net:8000/photos/" . $photoObject->getImageName();
             $intarray["id"] = $photoObject->getId();
             $allPhotosArray[] = $intarray;
         }
         return $allPhotosArray;
-
     }
-
 }
-
-?>

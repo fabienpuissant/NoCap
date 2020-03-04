@@ -1,11 +1,43 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-<h1>Test</h1>
 
-{{ nom }}
+	<div class="container_fluid mt-4 ml-4">
 
-{{  prenom  }}
+		<div class="row mt-4">
+			Hey, c’est l’heure du recap du dernière minute pour cette No Cap x PFW :
 
-{{ lien }}
-{% endblock %}
+			<ul>
+				<li>Horaire 21h-5h</li>
+				<li>* L’ACCUEIL FERME À 1H MAX *</li>
+				<li>Déroulement de la soirée : Nos exposants seront disposés au 1er et 2 étage jusqu’à 1 H</li>
+				<li>1 bar par étage sera à votre dispo (Astuce : restez à l’étage où le barman est le plus généreux 😂)</li>
+				<li>Pour info : La grande terrasse du 2e étage fermera à 2h et on aura encore 2 étages à notre disposition jusqu’à 5h</li>
+				<li>Pour info : La grande terrasse du 2e étage fermera à 2h et on aura encore 2 étages à notre disposition jusqu’à 5h 
+																																																		- Ne vous trompez pas d’entrée lorsque vous arrivez au théâtre ! Il y a un spectacle ce soir 😂 (entrée théâtre à droite 👉 , entrée de la tuerie où vous êtes invités à gauche 👈 )
+				</li>
+				<li>Vestiaires à 2€</li>
+
+
+			</ul>
+			<div class="row mt-4">
+				Venez le plus tôt possible nos exposants ont du beau travail à vous montrer !
+
+			</div>
+		</div>
+
+		<div class="row mt-4">
+
+			<img src="http://nocap.ddns.net:8000/img/map.png" style="height:50vh;width:auto"/>
+		</div>
+		<div class="row mt-4">
+			Voici votre lien pour accéder aux photos de la soirée, on vous attend nombreux pour voter
+		</br>
+		<a href={{ lien }}>{{lien}}</a>
+	</div>
+	<div class="row mt-4" style="margin-bottom:5vh;">
+		L’équipe No Cap 🚫🧢
+	</div>
+
+
+</div>{% endblock %}

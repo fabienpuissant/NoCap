@@ -1,0 +1,12 @@
+
+.container, .container_fluid {
+    font-size: 2.5em;
+}
+
+.form-control{
+    font-size: 0.75em;;
+}
+
+.card-title{
+    font-size : 1.5em;
+}

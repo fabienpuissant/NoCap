@@ -7,7 +7,7 @@ use \App\Repository\PhotoRepository;
 use \App\Entity\Photo;
 use \App\Repository\UserRepository;
 use \App\Entity\User;
-use \App\Repository\PhotoLikeRepository; 
+use \App\Repository\PhotoLikeRepository;
 use \App\Entity\PhotoLike;
 
 
@@ -26,7 +26,7 @@ class FluxController extends AbstractController
     private $apikey;
     private $photodisplayed = 0;
 
-    public function __construct(PhotoRepository $photorepository, SessionInterface $session, UserRepository $userrepository) 
+    public function __construct(PhotoRepository $photorepository, SessionInterface $session, UserRepository $userrepository)
     {
         $this->session = $session;
         $this->photorepository = $photorepository;
@@ -45,6 +45,8 @@ class FluxController extends AbstractController
     }
 
 
+
+
     /**
      * @Route("/flux", name = "flux" , methods = "GET|POST") 
      * @return \Symfony\Component\HttpFoundation\Response
@@ -52,18 +54,22 @@ class FluxController extends AbstractController
     public function display(Request $request)
     {
 
-        if(!isset($this->apikey)) {
+        if ($this->user == null) {
             return $this->render("notConnected.html.twig");
         }
 
         $allPhotosArray = $this->getPhotosByCategory('Mixte', 1);
-    
-        
-        return $this->render("flux.html.twig",
-                            ['allPhotos' => $allPhotosArray,
-                            'FirstCategory' => 'Mixte',
-                            'SecondCategory' => 'Femme',
-                            'ThirdCategory' => 'Homme']);
+
+
+        return $this->render(
+            "flux.html.twig",
+            [
+                'allPhotos' => $allPhotosArray,
+                'FirstCategory' => 'Mixte',
+                'SecondCategory' => 'Femme',
+                'ThirdCategory' => 'Homme'
+            ]
+        );
     }
 
     /**
@@ -73,28 +79,29 @@ class FluxController extends AbstractController
      * @param PostLikeRepository
      * @return Response
      */
-    public function like($id, PhotoLikeRepository $repository){
-       
+    public function like($id, PhotoLikeRepository $repository)
+    {
+
         $entityManager = $this->getDoctrine()->getManager();
         $photo = $this->photorepository->find($id);
-        
+
 
         //Premier cas, l'utilisateur n'est pas connecté
-        if(!($this->user)) return $this->json([
+        if (!($this->user)) return $this->json([
             'code' => 403,
             'message' => 'Unauthorized'
         ], 403);
 
-        
+
         //Deuxieme cas, l'utilisateur supprime son like
-        if($photo->isLikedByUser($this->user)) {
+        if ($photo->isLikedByUser($this->user)) {
             $like = $repository->findOneBy([
                 'photo' => $photo,
                 'user' => $this->user
             ]);
             $photo->removeLike($like);
             $entityManager->remove($like);
-            
+
             $entityManager->flush();
 
             return $this->json([
@@ -123,30 +130,43 @@ class FluxController extends AbstractController
      * @Route("/flux/{categorie}", name = "select_category")
      * @return Response
      */
-    public function selectCategory($categorie){
-        {
-            $allPhotosArray = $this->getPhotosByCategory($categorie, 1);
-            if($categorie == 'Mixte'){
-                return $this->render("flux.html.twig",
-                            ['allPhotos' => $allPhotosArray,
-                            'FirstCategory' => 'Mixte',
-                            'SecondCategory' => 'Femme',
-                            'ThirdCategory' => 'Homme']);   
-            }
-            else if($categorie == 'Homme'){
-                return $this->render("flux.html.twig",
-                            ['allPhotos' => $allPhotosArray,
-                            'FirstCategory' => 'Homme',
-                            'SecondCategory' => 'Femme',
-                            'ThirdCategory' => 'Mixte']);   
-            }
-            else {
-                return $this->render("flux.html.twig",
-                            ['allPhotos' => $allPhotosArray,
-                            'FirstCategory' => 'Femme',
-                            'SecondCategory' => 'Mixte',
-                            'ThirdCategory' => 'Homme']);   
-            }
+    public function selectCategory($categorie)
+    {
+        if ($this->user == null) {
+            return $this->render("notConnected.html.twig");
+        }
+
+        $allPhotosArray = $this->getPhotosByCategory($categorie, 1);
+        if ($categorie == 'Mixte') {
+            return $this->render(
+                "flux.html.twig",
+                [
+                    'allPhotos' => $allPhotosArray,
+                    'FirstCategory' => 'Mixte',
+                    'SecondCategory' => 'Femme',
+                    'ThirdCategory' => 'Homme'
+                ]
+            );
+        } else if ($categorie == 'Homme') {
+            return $this->render(
+                "flux.html.twig",
+                [
+                    'allPhotos' => $allPhotosArray,
+                    'FirstCategory' => 'Homme',
+                    'SecondCategory' => 'Femme',
+                    'ThirdCategory' => 'Mixte'
+                ]
+            );
+        } else {
+            return $this->render(
+                "flux.html.twig",
+                [
+                    'allPhotos' => $allPhotosArray,
+                    'FirstCategory' => 'Femme',
+                    'SecondCategory' => 'Mixte',
+                    'ThirdCategory' => 'Homme'
+                ]
+            );
         }
     }
 
@@ -158,7 +178,8 @@ class FluxController extends AbstractController
      * @param integer number of photo already displayed
      * @return Response
      */
-    public function scroll(string $category, string $nbPhotoDisplayed){
+    public function scroll(string $category, string $nbPhotoDisplayed)
+    {
         $allPhotosArray = $this->getPhotosByCategory($category, intval($nbPhotoDisplayed));
         return $this->json([
             'code' => 200,
@@ -187,35 +208,32 @@ class FluxController extends AbstractController
 
         //Get the photos we need
         //p is the number of photos we display at the same time
-        $p = 2;
+        $p = 4;
         $photoToDisplay = [];
-        
-        for($i = ($nbPhotoDisplayed - 1)*$p; $i<$nbPhotoDisplayed*$p; $i++){
-            if(isset($allPhotosObjects[$i])){
+
+        //var_dump(count($allPhotosObjects));
+
+        for ($i = ($nbPhotoDisplayed - 1) * $p; $i < $nbPhotoDisplayed * $p; $i++) {
+            if (isset($allPhotosObjects[$i])) {
                 $photoToDisplay[] = $allPhotosObjects[$i];
             }
         }
 
-        foreach($photoToDisplay as $photoObject)
-        {
+        foreach ($photoToDisplay as $photoObject) {
             $intarray = [];
-            if($photoObject->isLikedByUser($this->user)){
-                $intarray["Like"] = "coeurliked.png";
+            if ($photoObject->isLikedByUser($this->user)) {
+                $intarray["Like"] = "http://nocap.ddns.net:8000/img/coeurliked.png";
             } else {
-                $intarray["Like"] = "coeur.png";
-            }            
+                $intarray["Like"] = "http://nocap.ddns.net:8000/img/coeur.png";
+            }
             $intarray["Likes"] = count($photoObject->getLikes());
             $intarray["Title"] = $photoObject->getTitle();
             $intarray["Description"] = $photoObject->getDescription();
             $intarray["Author"] = $photoObject->getAuthor();
-            $intarray["FileName"] = $photoObject->getFileName();
+            $intarray["FileName"] = "http://nocap.ddns.net:8000/photos/" . $photoObject->getImageName();
             $intarray["id"] = $photoObject->getId();
             $allPhotosArray[] = $intarray;
         }
         return $allPhotosArray;
-
     }
-
 }
-
-?>

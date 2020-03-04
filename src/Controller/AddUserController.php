@@ -70,6 +70,3 @@ class AddUserController extends AbstractController
         ]);
     }
 }
-
-
-?>

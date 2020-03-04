@@ -1,63 +1,78 @@
 {% extends "base.html.twig" %}
 
 
-{% block title %}NoCap{% endblock %}
+{% block title %}NoCap
+{% endblock %}
+
 
 {% block body %}
 
-  <div class ="container mt-4">
-    <div class = "form-group mt-4">
-      <label for="Categorie">Catégorie</label>
-       <select class="form-control" id="Categorie" onchange="selectCategorie()">
-        <option>{{ FirstCategory }}</option>
-        <option>{{ SecondCategory }}</option>
-        <option>{{ ThirdCategory }}</option>
-      </select>
-    </div>
-  </div>
-    <div class="container mt-4" id = "photos">
-    {% for photo in  allPhotos  %}
+	<div class="container mt-4">
+		<div class="form-group mt-4">
+			<label for="Categorie">Catégorie</label>
+			<select class="form-control" id="Categorie" onchange="selectCategorie()">
+				<option>{{ FirstCategory }}</option>
+				<option>{{ SecondCategory }}</option>
+				<option>{{ ThirdCategory }}</option>
+			</select>
+		</div>
+	</div>
+	<div class="container_fluid mt-4" id="photos">
+		{% for photo in  allPhotos  %}
 
-      
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">{{ photo["Title"] }}</h5>
-            <p class="card-text">{{ photo["Description"]}}</p>
-            <p class="card-text"><small>Auteur : {{ photo["Author"] }}</small></p>
-          </div>
-          <img src={{ asset(photo['FileName'], 'photos') }} class="card-img-top photo_actu" alt="image_displayed">
-          <div class="vote"  data-ref_id = "{{ photo['id'] }}"  id = "{{ photo['id'] }}">
-            <div class="vote_btns">
-              <div class="vote_btn vote_like" data-vote = 'like' data-ref-id = {{ photo['id'] }}>
-                  <a href = {{ path('post_like', {id: photo['id']}) }} class = "js-like" style="text-decoration:none;color:black">
-                    <img src={{ asset(photo['Like'], 'images') }} alt="like icon" class = "js-img"><span class = "js-like" data-ref-id = {{ photo['id'] }}>{{ photo['Likes'] }}</span>
-                  </a>
-              </div>
-            </div>
-          </div>
-          </div>
-        
-        <br/> 
 
-    {% endfor %}
-    </div>
-    <div id="end"></div>
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title">{{ photo["Title"] }}</h5>
+					<p class="card-text">{{ photo["Description"]}}</p>
+					<p class="card-text">
+						<small>Auteur :
+							{{ photo["Author"] }}</small>
+					</p>
+				</div>
 
-  {% if allPhotos is empty %}
+				<img src={{ asset(photo['FileName']) | imagine_filter('my_thumb') }} class="card-img-top lazy" alt="image_displayed">
 
-    <div class = 'noResults'>Aucune photo disponible</div>  
 
-  {% endif %}
+				<div class="vote" data-ref_id="{{ photo['id'] }}" id="{{ photo['id'] }}">
+					<div class="vote_btns">
+						<div class="vote_btn vote_like" data-vote='like' data-ref-id={{ photo['id'] }}>
+							<a href={{ path('post_like', {id: photo['id']} ) }} class="js-like" style="text-decoration:none;color:black">
+								<img src={{ photo['Like'] }} alt="like icon" class="js-img"><span class="js-like ml-4" data-ref-id={{ photo['id'] }}>{{ photo['Likes'] }}</span>
+
+
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<br/>
+
+		{% endfor %}
+	</div>
+	<div id="end"></div>
+
+	{% if allPhotos is empty %}
+
+		<div class="container">
+			<div class="row ml-4">
+				<div class='noResults'>Aucune photo disponible</div>
+			</div>
+		</div>
+
+
+	{% endif %}
 
 {% endblock %}
 
 
 {% block javascripts %}
 
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-<script src = "../js/main.js"></script>
+	<script src="http://nocap.ddns.net:8000/js/main.js"></script>
 
 {% endblock %}

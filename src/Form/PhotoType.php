@@ -34,7 +34,7 @@ class PhotoType extends AbstractType
                 // in the associated entity, so you can use the PHP constraint classes
                 'constraints' => [
                     new File([
-                        'maxSize' => '1024k',
+                        'maxSize' => '500000k',
                         'mimeTypes' => [
                             'image/png',
                             'image/jpg',
@@ -48,11 +48,12 @@ class PhotoType extends AbstractType
             ->add('Author', TextType::class, ['label' => 'Auteur'])
             ->add('Description', TextType::class, ['label' => 'Description'])
             ->add('Categorie', ChoiceType::class, ['choices' =>
-                                                    ['Homme' => 'Homme',
-                                                    'Femme' => 'Femme',
-                                                    'Mixte' => 'Mixte']], ['label' => 'categorie'])
-            ->add('save', SubmitType::class, ['label' => 'Envoyer la photo'])
-        ;
+            [
+                'Homme' => 'Homme',
+                'Femme' => 'Femme',
+                'Mixte' => 'Mixte'
+            ]], ['label' => 'categorie'])
+            ->add('save', SubmitType::class, ['label' => 'Envoyer la photo']);
     }
 
     public function configureOptions(OptionsResolver $resolver)

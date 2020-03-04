@@ -1,26 +1,28 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory:
-            memory:
-                users:
-                    NoCapPhotographe:
-                        password: NoCap237
-                        roles: 'ROLE_PHOTOGRAPHE'
-                    NoCapAdmin:
-                        password: admin
-                        roles: 'ROLE_ADMIN'
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\Admin
+                property: username
+        # used to reload user from session & other features (e.g. switch_user)
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
             anonymous: lazy
-            http_basic: true
+            #http_basic: true
+            
     
             logout:
                 path: /logout
-                target: /index
+                target: /flux
+            guard:
+                authenticators:
+                    - App\Security\LoginFormAuthenticator
 
 
             # activate different ways to authenticate
@@ -32,8 +34,14 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-         - { path: ^/admin, roles: ROLE_PHOTOGRAPHE }
+         - { path: ^/admin, roles: ROLE_ADMIN }
          - { path: ^/photographe, roles: ROLE_PHOTOGRAPHE }
 
     encoders:
-        Symfony\Component\Security\Core\User\User: plaintext
+        #Symfony\Component\Security\Core\User\User: plaintext
+        App\Entity\Admin:
+            algorithm: bcrypt
+        App\Entity\Photographe:
+            algorithm: bcrypt
+
+

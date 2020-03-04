@@ -22,7 +22,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/index", name = "adminIndex" , methods = "GET|POST") 
+     * @Route("/admin/index", name = "index_admin" , methods = "GET|POST") 
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function add(Request $request)
@@ -39,12 +39,23 @@ class AdminController extends AbstractController
             $data = $form->getData();
 
             //Si l'utilisateur est dans la base de données
-            if($this->repository->checkUser($data->getNom(), $data->getPrenom()) 
-                || $this->repository->checkCode($data->getCode())){
-                $user = $this->repository->setUserIn($data->getNom(), $data->getPrenom());
+            if (
+                $this->repository->checkUserbyEmail($data->getEmail())
+                || $this->repository->checkCode($data->getCode())
+            ) {
+
+                if ($this->repository->checkUserbyEmail($data->getEmail())) {
+                    $user = $this->repository->getUserFromEmail($data->getEmail());
+                } else {
+                    $user = $this->repository->getUserFromCode($data->getCode());
+                }
+
+                $this->repository->setUserIn($data->getNom(), $data->getPrenom());
+
+                $entityManager->flush();
 
                 //Si l'utilisateur est deja rentré, on renvoie une erreur
-                if($user->getIsIn()){
+                if ($user->getIsIn()) {
                     return $this->render("AdminIndex.html.twig", [
                         'form' =>  $form->createView(),
                         'err' => 3,
@@ -60,19 +71,16 @@ class AdminController extends AbstractController
                 ]);
             }
             //L'utilisateur n'est pas dans la base, on renvoie une erreur
-            return $this->render("AdminIndex.html.twig",[
+            return $this->render("AdminIndex.html.twig", [
                 'form' =>  $form->createView(),
-                'err' => 1, 
-                ]);
+                'err' => 1,
+            ]);
         }
 
         //Pas d'affichage d'eurreur ni succes si le form n'est pas validé
-        return $this->render("AdminIndex.html.twig",[
+        return $this->render("AdminIndex.html.twig", [
             'form' =>  $form->createView(),
-            'err' => 0, 
-            ]);
+            'err' => 0,
+        ]);
     }
 }
-
-
-?>

@@ -19,23 +19,35 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function checkUserbyEmail($email)
+    {
+        $user = $this->createQueryBuilder('u')
+            ->andWhere('u.email = :val')
+            ->setParameter('val', $email)
+            ->getQuery()
+            ->getResult();
+        if (!empty($user)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      *@param string the apikey value
-    * @return bool true if the user is in the database
-    */
-    
+     * @return bool true if the user is in the database
+     */
+
     public function checkApiKey($value)
     {
         $user = $this->createQueryBuilder('u')
             ->andWhere('u.Apikey = :val')
             ->setParameter('val', $value)
             ->getQuery()
-            ->getResult()
-        ;
-        if(!empty($user)){
+            ->getResult();
+        if (!empty($user)) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -44,17 +56,16 @@ class UserRepository extends ServiceEntityRepository
      * @param string the apikey of the user to find
      * @return User the user searched or NULL if it does not extist
      */
-    public function findUserByApiKey($apikey){
+    public function findUserByApiKey($apikey)
+    {
         $user = $this->createQueryBuilder('u')
             ->andWhere('u.Apikey = :val')
             ->setParameter('val', $apikey)
             ->getQuery()
-            ->getResult()
-        ;
-        if(!empty($user)){
+            ->getResult();
+        if (!empty($user)) {
             return $user[0];
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -64,12 +75,12 @@ class UserRepository extends ServiceEntityRepository
      * @param string The laste name of the user to search
      * @return bool True if the user is in the database
      */
-    public function checkUser($nom, $prenom){
-       $user = $this->getUserFromName($nom, $prenom);
-        if(!empty($user)){
+    public function checkUser($nom, $prenom)
+    {
+        $user = $this->getUserFromName($nom, $prenom);
+        if (!empty($user)) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -79,17 +90,16 @@ class UserRepository extends ServiceEntityRepository
      * @param string The code of the user to search
      * @return bool True if the user is in the database
      */
-    public function checkCode($code){
-        $code = $this->createQueryBuilder('u')
-        ->andWhere('u.Code = :code')
-        ->setParameter('code', $code)
-        ->getQuery()
-        ->getResult()
-        ;
-        if(!empty($code)){
+    public function checkCode($code)
+    {
+        $codelink = $this->createQueryBuilder('u')
+            ->andWhere('u.Code = :code')
+            ->setParameter('code', $code)
+            ->getQuery()
+            ->getResult();
+        if (!empty($codelink)) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -100,15 +110,13 @@ class UserRepository extends ServiceEntityRepository
      * @param string Last name of the user
      * @return bool True if the user is setted in, false if the user was not found
      */
-    public function setUserIn($nom, $prenom){
-        $entityManager = $this->getDoctrine()->getManager();
+    public function setUserIn($nom, $prenom)
+    {
         $user = $this->getUserFromName($nom, $prenom);
-        if($user){
+        if ($user) {
             $user->setIsIn(true);
-            $entityManager->flush();
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -118,22 +126,58 @@ class UserRepository extends ServiceEntityRepository
      *@param string Laste name of the user to search
      *@return User if it is found, NULL if it is not in the database    
      */
-    public function getUserFromName($nom, $prenom){
+    public function getUserFromName($nom, $prenom)
+    {
         $user = $this->createQueryBuilder('u')
-        ->andWhere('u.Nom = :nom')
-        ->setParameter('nom', $nom)
-        ->andWhere('u.Prenom = :prenom')
-        ->setParameter('prenom', $prenom)
-        ->getQuery()
-        ->getResult()
-        ;
-        if(!empty($user)){
+            ->andWhere('u.Nom = :nom')
+            ->setParameter('nom', $nom)
+            ->andWhere('u.Prenom = :prenom')
+            ->setParameter('prenom', $prenom)
+            ->getQuery()
+            ->getResult();
+        if (!empty($user)) {
             return $user[0];
-        }
-        else {
+        } else {
             return false;
         }
     }
+
+    /**
+     *@param string Email of the user to search
+     *@return User if it is found, NULL if it is not in the database    
+     */
+    public function getUserFromEmail($email)
+    {
+        $user = $this->createQueryBuilder('u')
+            ->andWhere('u.email = :nom')
+            ->setParameter('nom', $email)
+            ->getQuery()
+            ->getResult();
+        if (!empty($user)) {
+            return $user[0];
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     *@param string Code of the user to search
+     *@return User if it is found, NULL if it is not in the database    
+     */
+    public function getUserFromCode($code)
+    {
+        $user = $this->createQueryBuilder('u')
+            ->andWhere('u.Code = :nom')
+            ->setParameter('nom', $code)
+            ->getQuery()
+            ->getResult();
+        if (!empty($user)) {
+            return $user[0];
+        } else {
+            return false;
+        }
+    }
+
 
 
     /*

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200218170442 extends AbstractMigration
+final class Version20200226183801 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -22,7 +22,8 @@ final class Version20200218170442 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE photo ADD categorie VARCHAR(255) NOT NULL');
+        $this->addSql('ALTER TABLE admin CHANGE roles roles JSON NOT NULL');
+        $this->addSql('ALTER TABLE photographe CHANGE roles roles JSON NOT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -30,6 +31,7 @@ final class Version20200218170442 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE photo DROP categorie');
+        $this->addSql('ALTER TABLE admin CHANGE roles roles LONGTEXT CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_bin`');
+        $this->addSql('ALTER TABLE photographe CHANGE roles roles LONGTEXT CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_bin`');
     }
 }

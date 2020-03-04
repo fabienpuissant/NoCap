@@ -16,11 +16,9 @@ class UserSearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('Nom', TextType::class, ['label' => 'Nom'])
-            ->add('Prenom', TextType::class, ['label' => 'Prenom'])
-            ->add('Code', TextType::class, ['label'=> 'Code'])
-            ->add('save', SubmitType::class, ['label' => 'Rechercher utilisateur'])
-        ;
+            ->add('Email', EmailType::class, ['label' => 'Email', 'required' => false])
+            ->add('Code', TextType::class, ['label' => 'Code', 'required' => false])
+            ->add('save', SubmitType::class, ['label' => 'Rechercher utilisateur']);
     }
 
     public function configureOptions(OptionsResolver $resolver)
